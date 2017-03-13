@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+		<style type="text/css">
+			*{
+				margin: 0;
+				padding: 0;
+			}
+			#box{
+				width: 1000px;
+				margin: 0 auto;
+				list-style: none;
+				background: #eee;
+			}
+			#box li{
+				text-indent: 30px;
+				background: #f1f1f1;
+				margin: 20px 0;
+				color: #333;
+				font-size: 30px;
+				line-height: 45px;
+			}
+			#box li:first-child{
+				display: none;
+			}
+			@media only screen and (max-width:480px ) {
+				#box{
+					width: 100%;
+					padding: 20px;
+					box-sizing: border-box;
+				}
+				#box li{
+					text-indent: 50px;
+					font-size: 24px;
+					box-sizing: border-box;
+				}
+				
+			}
+		</style>
+	</head>
+	<script src="http://cdn.bootcss.com/jquery/2.0.3/jquery.js"></script>
+	<body>
+		<ul id="box">
+		</ul>
+	</body>
+	<script type="text/javascript">
+		function formatterDateTime() {
+		    var date=new Date()
+		    var month=date.getMonth() + 1
+	        var datetime = date.getFullYear()
+	                + ""// "年"
+	                + (month >= 10 ? month : "0"+ month)
+	                + ""// "月"
+	                + (date.getDate() < 10 ? "0" + date.getDate() : date
+	                        .getDate())
+	                + ""
+	                + (date.getHours() < 10 ? "0" + date.getHours() : date
+	                        .getHours())
+	                + ""
+	                + (date.getMinutes() < 10 ? "0" + date.getMinutes() : date
+	                        .getMinutes())
+	                + ""
+	                + (date.getSeconds() < 10 ? "0" + date.getSeconds() : date
+	                        .getSeconds());
+	        return datetime;
+	    }
+		function ajax(obj,cb){
+			$.ajax({
+				type:obj.fn,
+				url:obj.url || "get",
+				data:obj.data,
+				success:function(data){
+					if(typeof data === "string"){
+						cb($.parseJSON(data))
+					}else{
+						cb(data);
+					}
+				}
+			});
+		}
+		function postData(){
+			ajax({
+				url:"https://route.showapi.com/955-2",
+				data:{
+					showapi_appid:33584,
+					showapi_sign:"bc26e7ff16d746f69d4430889ad03c49",
+					id:localStorage.getItem("id"),
+					showapi_timestamp:formatterDateTime(),
+					page:1
+				}
+			},function(data){
+				data = data.showapi_res_body.text;
+				data = data.split("&nbsp;&nbsp;&nbsp;");
+				console.log(data);
+				$.each(data, function(i,val) {
+					var $li = $("<li>");
+					$li.html(val);
+					$("#box").append($li)
+				});
+				
+			})
+		}
+		postData();
+	</script>
+</html>
